@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>241</height>
+    <width>576</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Przelicznik średnic i obwodów</string>
+   <string>Przeliczanie średnic i obwodów drzew jedno i  wielopniowych</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>20</y>
      <width>551</width>
-     <height>211</height>
+     <height>161</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -50,63 +50,17 @@
           <x>10</x>
           <y>10</y>
           <width>531</width>
-          <height>124</height>
+          <height>121</height>
          </rect>
         </property>
-        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="4,6" columnminimumwidth="1,1">
+        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="4,6" rowminimumheight="0,0,0,1" columnminimumwidth="1,1">
          <property name="verticalSpacing">
           <number>5</number>
          </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Lokalizacja pliku</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QgsFileWidget" name="obw_in_dlg">
-           <property name="filter">
-            <string>*.shp</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
             <string>Nazwa kolumny z obwodami</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="obw_diam_cmb"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>Nazwa nowej kolumny z średnicami</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="obw_newcol_led"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>Znacznik odzielający drzewa wielopniowe</string>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -140,20 +94,63 @@
            </item>
           </widget>
          </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Nazwa nowej kolumny z średnicami</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Znacznik odzielający drzewa wielopniowe</string>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="obw_newcol_led">
+           <property name="text">
+            <string>sred</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QgsFileWidget" name="obw_in_dlg">
+           <property name="fileWidgetButtonVisible">
+            <bool>true</bool>
+           </property>
+           <property name="filter">
+            <string>*.shp</string>
+           </property>
+           <property name="options">
+            <set>QFileDialog::ReadOnly</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Lokalizacja pliku</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="obw_diam_cmb"/>
+         </item>
         </layout>
-       </widget>
-       <widget class="QDialogButtonBox" name="btn_box">
-        <property name="geometry">
-         <rect>
-          <x>350</x>
-          <y>150</y>
-          <width>193</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="d_obw_tab">
@@ -166,7 +163,7 @@
           <x>10</x>
           <y>10</y>
           <width>531</width>
-          <height>124</height>
+          <height>121</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0" columnstretch="4,6" rowminimumheight="0,0,0,1" columnminimumwidth="1,1">
@@ -191,12 +188,15 @@
            <property name="filter">
             <string>*.shp</string>
            </property>
+           <property name="options">
+            <set>QFileDialog::ReadOnly</set>
+           </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_10">
            <property name="text">
-            <string>Nazwa kolumny z obwodami</string>
+            <string>Nazwa kolumny z średnicami</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -209,7 +209,7 @@
          <item row="2" column="0">
           <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Nazwa nowej kolumny z średnicami</string>
+            <string>Nazwa nowej kolumny zobwodami</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -217,7 +217,11 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="d_newcol_led"/>
+          <widget class="QLineEdit" name="d_newcol_led">
+           <property name="text">
+            <string>obw</string>
+           </property>
+          </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_12">
@@ -265,6 +269,35 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QDialogButtonBox" name="btn_box">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>240</y>
+     <width>193</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>200</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wczytaj plik po zakończeniu</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <customwidgets>

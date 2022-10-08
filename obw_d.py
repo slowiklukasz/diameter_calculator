@@ -23,7 +23,6 @@ class DiamCalculator:
         
         # SPRAWDZENIE CZY WARSTWA ZWAWIERA ODPOWIEDNIĄ KOLUMNĘ/STWORZENIE NOWEJ KOLUMNY
         idx = lyr.fields().indexOf(d_fld.name())
-        print("idx", idx)
 
         if idx == -1:
             lyr.dataProvider().addAttributes([d_fld])
@@ -39,9 +38,10 @@ class DiamCalculator:
             if codice in ('P103108', 'P103118') and obw:
                 if sep_type in obw:
                     for i in obw.split(sep_type):
-                        tmp = round(float(i)/ math.pi)
-                        d += "{};".format(tmp)
-                        ftr[d_fld.name()] = d[:-1]
+                        if i != "": # when last char is ";"
+                            tmp = round(float(i)/ math.pi)
+                            d += "{};".format(tmp)
+                            ftr[d_fld.name()] = d[:-1]
                 else:
                     ftr[d_fld.name()] = str(round(float(obw)/math.pi))
                     
@@ -53,7 +53,7 @@ class DiamCalculator:
                             lyr.sourceName(), \
                             "ogr")
  
-        msg = f"Zakończono! \n\
+        msg = f"Zakończono! \n\n\
         - Dane z pola '{obw_col_nm}' zostały przeliczone na średnice i dodane do kolumny '{d_col_nm}'.\n\
         - Czas wykonania obliczeń: {round(stop - start)} sek."
 

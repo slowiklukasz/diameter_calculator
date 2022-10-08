@@ -235,32 +235,46 @@ class DiamCalc:
 
 
     def btn_box_accepted(self):
-        self.dlg_info = DlgInfo()
-        self.dlg_info.setModal(True)
-        
-        self.dlg_info.info_ted.append('Obliczenia w trakcie, proszę czekać ...')
-        
-        self.dlg_info.timer = QtCore.QTimer()
-        self.dlg_info.timer.setSingleShot(True)
-        self.dlg_info.timer.setInterval(100)
-        self.dlg_info.timer.timeout.connect(self.evt_timer_timeout)
-        
-        self.dlg_info.show()
-        self.dlg_info.timer.start()
-        self.dlg_info.exec_()
+        if self.dlg.obw_in_dlg.filePath() == "":
+            QMessageBox.warning(self.dlg, 'Błąd!', 'Nie wybrano pliku')
+        elif not self.lyr.isValid():
+            QMessageBox.warning(self.dlg, 'Błąd!', 'Błędny plik')
+        elif self.dlg.obw_diam_cmb.currentText() =="":
+            QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano kolumny z obwodami')
+        elif self.dlg.obw_newcol_led.text()=="":
+            QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano nazwy kolumny z średnicami')
+        else:
+            self.dlg_info = DlgInfo()
+            self.dlg_info.setModal(True)
+            
+            self.dlg_info.info_ted.append('Obliczenia w trakcie, proszę czekać ...')
+            
+            self.dlg_info.timer = QtCore.QTimer()
+            self.dlg_info.timer.setSingleShot(True)
+            self.dlg_info.timer.setInterval(100)
+            self.dlg_info.timer.timeout.connect(self.evt_timer_timeout)
+            
+            self.dlg_info.show()
+            self.dlg_info.timer.start()
+            self.dlg_info.exec_()
     
-    
-    def btn_box_rejected(self):
-        self.dlg.close()
-        
         
     def evt_timer_timeout(self):
         obw_col_nm = self.dlg.obw_diam_cmb.currentText()
         d_col_nm = self.dlg.obw_newcol_led.text()
         sep_type = self.dlg.obw_sep_cmb.currentText()[-3:-2]
         
-        msg = DiamCalculator.obw_d_calc(self.lyr, obw_col_nm, d_col_nm, sep_type)
+        try:
+            msg = DiamCalculator.obw_d_calc(self.lyr, obw_col_nm, d_col_nm, sep_type)
+        except Exception as e:
+            msg = f"Błąd! \n\n\
+            - {repr(e)} \n\
+            - Sprawdź poprawność danych \n\
+            - Sprawdź czy wybrano właściwą kolumnę"
+
         self.dlg_info.info_ted.clear()
         self.dlg_info.info_ted.setText(f'{msg}')
-        
 
+
+    def btn_box_rejected(self):
+        self.dlg.close()
