@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DiamCalcDialogBase</class>
+ <widget class="QDialog" name="DiamCalcDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>572</width>
+    <height>241</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Przelicznik średnic i obwodów</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>551</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="main_tab">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <property name="movable">
+       <bool>false</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="obw_d_tab">
+       <attribute name="title">
+        <string>Obwody na średnice</string>
+       </attribute>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>531</width>
+          <height>124</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="4,6" columnminimumwidth="1,1">
+         <property name="verticalSpacing">
+          <number>5</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Lokalizacja pliku</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QgsFileWidget" name="obw_in_dlg">
+           <property name="filter">
+            <string>*.shp</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Nazwa kolumny z obwodami</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="obw_diam_cmb"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Nazwa nowej kolumny z średnicami</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="obw_newcol_led"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Znacznik odzielający drzewa wielopniowe</string>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="obw_sep_cmb">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <item>
+            <property name="text">
+             <string>średnik (&quot;;&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>pauza (&quot;-&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>przecinek (&quot;,&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>spacja (&quot; &quot;)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QDialogButtonBox" name="btn_box">
+        <property name="geometry">
+         <rect>
+          <x>350</x>
+          <y>150</y>
+          <width>193</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="d_obw_tab">
+       <attribute name="title">
+        <string>Średnice na obwody</string>
+       </attribute>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>531</width>
+          <height>124</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0" columnstretch="4,6" rowminimumheight="0,0,0,1" columnminimumwidth="1,1">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <property name="verticalSpacing">
+          <number>5</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Lokalizacja pliku</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QgsFileWidget" name="d_in_dlg">
+           <property name="filter">
+            <string>*.shp</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Nazwa kolumny z obwodami</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="d_diam_cmb"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Nazwa nowej kolumny z średnicami</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="d_newcol_led"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Znacznik odzielający drzewa wielopniowe</string>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="d_sep_cmb">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <item>
+            <property name="text">
+             <string>średnik (&quot;;&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>pauza (&quot;-&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>przecinek (&quot;,&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>spacja (&quot; &quot;)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFileWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfilewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
