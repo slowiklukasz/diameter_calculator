@@ -40,7 +40,7 @@
       <property name="tabBarAutoHide">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="obw_d_tab">
+      <widget class="QWidget" name="cir2diam_tab">
        <attribute name="title">
         <string>Obwody na średnice</string>
        </attribute>
@@ -173,7 +173,7 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="d_obw_tab">
+      <widget class="QWidget" name="diam2cir_tab">
        <attribute name="title">
         <string>Średnice na obwody</string>
        </attribute>
