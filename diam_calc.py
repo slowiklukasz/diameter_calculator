@@ -206,40 +206,26 @@ class DiamCalc:
             
             self.dlg.btn_box.accepted.connect(self.btn_box_accepted)
             self.dlg.btn_box.rejected.connect(self.btn_box_rejected)
+            
+            self.dlg.closeEvent = self.close_event
 
         # show the dialog
         self.dlg.show()
-#        result = self.dlg.exec_()
-#        if result:
-#            # Do something useful here - delete the line containing pass and
-#            # substitute with your code.
-#            obw_col_nm = self.dlg.obw_diam_cmb.currentText()
-#            d_col_nm = self.dlg.obw_newcol_led.text()
-#            sep_type = self.dlg.obw_sep_cmb.currentText()[-3:-2]
-#            
-#            DiamCalculator.obw_d_calc(self.lyr, obw_col_nm, d_col_nm, sep_type)
-            
+
             
     # ADDED BY LS
     def main_tab_changed(self):
-        self.lyr = ""
-        cir_col_nm = ""
-        diam_col_nm = ""
-        diam_col_nm = ""
-        cir_col_nm = ""
-        sep_type = ""
-        rounding = ""
-        
         self.dlg.cir_fn_dlg.setFilePath("")
-        self.dlg.cir_newcol_led.setText("sred")
         self.dlg.cir_sep_cmb.setCurrentIndex(0)
         self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
         
         self.dlg.diam_fn_dlg.setFilePath("")
-        self.dlg.diam_newcol_led.setText("obw")
         self.dlg.diam_sep_cmb.setCurrentIndex(0)
         self.dlg.diam_rnd_sbx.setValue(0)
-        
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
     
     def cir_fn_changed(self):
         if self.dlg.cir_fn_dlg.filePath() == "":
@@ -327,24 +313,38 @@ class DiamCalc:
         diam_col_nm = self.dlg.cir_newcol_led.text()
         sep_type = self.dlg.cir_sep_cmb.currentText()[-3:-2]
         rounding = self.dlg.cir_rnd_sbx.value()
+        chk_codice = self.dlg.codice_chk.isChecked()
         
         try:
             msg = CirDiamCalc.cir_to_diam(  self.lyr, cir_col_nm, \
-                                            diam_col_nm, sep_type, rounding)
+                                            diam_col_nm, sep_type, \
+                                            rounding, chk_codice)
             
-            if self.dlg.load_btn.isChecked():
+            if self.dlg.load_chk.isChecked():
                 iface.addVectorLayer(self.lyr.dataProvider().dataSourceUri(), \
                                     self.lyr.sourceName(), \
                                     "ogr")
-                
         except Exception as e:
             msg = f"Błąd! \n\n\
             - {repr(e)} \n\
-            - Sprawdź poprawność danych \n\
-            - Sprawdź czy wybrano właściwą kolumnę"
+            \t- Sprawdź poprawność przeliczanych danych \n\
+            \t- Sprawdź czy wybrano właściwą kolumnę \n\
+            \t- Sprawdź czy wybrano właściwy znacznik oddzielający"
 
         self.dlg_info.info_ted.clear()
         self.dlg_info.info_ted.setText(f'{msg}')
+        
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
 
 
     def diam_to_cir_timeout(self):
@@ -352,33 +352,69 @@ class DiamCalc:
         cir_col_nm = self.dlg.diam_newcol_led.text()
         sep_type = self.dlg.diam_sep_cmb.currentText()[-3:-2]
         rounding = self.dlg.diam_rnd_sbx.value()
+        chk_codice = self.dlg.codice_chk.isChecked()
         
-        msg = f"""
-        {self.lyr.dataProvider().dataSourceUri()}
-        {diam_col_nm},
-        {cir_col_nm},
-        {sep_type},
-        {rounding}
-        """
-        
-#        try:
-#            msg = CirDiamCalc.diam_to_cir(  self.lyr, diam_col_nm, \
-#                                            cir_col_nm, sep_type, rounding)
-#            
-#            if self.dlg.load_btn.isChecked():
-#                iface.addVectorLayer(self.lyr.dataProvider().dataSourceUri(), \
-#                                    self.lyr.sourceName(), \
-#                                    "ogr")
-#                
-#        except Exception as e:
-#            msg = f"Błąd! \n\n\
-#            - {repr(e)} \n\
-#            - Sprawdź poprawność danych \n\
-#            - Sprawdź czy wybrano właściwą kolumnę"
+        try:
+            msg = CirDiamCalc.diam_to_cir(  self.lyr, diam_col_nm, \
+                                            cir_col_nm, sep_type, \
+                                            rounding, chk_codice)
+            
+            if self.dlg.load_chk.isChecked():
+                iface.addVectorLayer(self.lyr.dataProvider().dataSourceUri(), \
+                                    self.lyr.sourceName(), \
+                                    "ogr")
+        except Exception as e:
+            msg = f"Błąd! \n\n\
+            - {repr(e)} \n\
+            \t- Sprawdź poprawność przeliczanych danych \n\
+            \t- Sprawdź czy wybrano właściwą kolumnę \n\
+            \t- Sprawdź czy wybrano właściwy znacznik oddzielający"
 
         self.dlg_info.info_ted.clear()
         self.dlg_info.info_ted.setText(f'{msg}')
+        
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
 
 
     def btn_box_rejected(self):
+        self.dlg.main_tab.setCurrentIndex(0)
+        
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
+        
         self.dlg.close()
+        
+        
+    def close_event(self, event):
+        self.dlg.main_tab.setCurrentIndex(0)
+        
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)

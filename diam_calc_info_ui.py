@@ -15,6 +15,7 @@ class Ui_InfoDlg(object):
     def setupUi(self, InfoDlg):
         InfoDlg.setObjectName("InfoDlg")
         InfoDlg.resize(603, 187)
+        InfoDlg.setToolTip("")
         self.info_ted = QtWidgets.QTextEdit(InfoDlg)
         self.info_ted.setGeometry(QtCore.QRect(20, 10, 571, 161))
         self.info_ted.setReadOnly(True)
@@ -25,7 +26,7 @@ class Ui_InfoDlg(object):
 
     def retranslateUi(self, InfoDlg):
         _translate = QtCore.QCoreApplication.translate
-        InfoDlg.setWindowTitle(_translate("InfoDlg", "Info"))
+        InfoDlg.setWindowTitle(_translate("InfoDlg", "Status obliczeń"))
 
 
 if __name__ == "__main__":

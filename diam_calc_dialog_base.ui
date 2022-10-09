@@ -2,16 +2,19 @@
 <ui version="4.0">
  <class>DiamCalcDialogBase</class>
  <widget class="QDialog" name="DiamCalcDialogBase">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>320</height>
+    <width>570</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Przeliczanie średnic i obwodów drzew jedno i  wielopniowych</string>
+   <string>Przeliczanie średnic i obwodów drzew jedno oraz wielopniowych</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -40,7 +43,7 @@
       <property name="tabBarAutoHide">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="cir2diam_tab">
+      <widget class="QWidget" name="cir_to_diam_tab">
        <attribute name="title">
         <string>Obwody na średnice</string>
        </attribute>
@@ -95,7 +98,17 @@
            </item>
            <item>
             <property name="text">
-             <string>pauza (&quot;-&quot;)</string>
+             <string>dwukropek (&quot;:&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>plus (&quot;+&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>minus (&quot;-&quot;)</string>
             </property>
            </item>
            <item>
@@ -173,7 +186,7 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="diam2cir_tab">
+      <widget class="QWidget" name="diam_to_cir_tab">
        <attribute name="title">
         <string>Średnice na obwody</string>
        </attribute>
@@ -248,7 +261,17 @@
            </item>
            <item>
             <property name="text">
-             <string>pauza (&quot;-&quot;)</string>
+             <string>dwukropek(&quot;:&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>plus (&quot;+&quot;)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>minus (&quot;-&quot;)</string>
             </property>
            </item>
            <item>
@@ -314,7 +337,7 @@
    <property name="geometry">
     <rect>
      <x>360</x>
-     <y>270</y>
+     <y>310</y>
      <width>193</width>
      <height>28</height>
     </rect>
@@ -323,21 +346,37 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QRadioButton" name="load_btn">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>240</y>
-     <width>201</width>
-     <height>20</height>
+     <width>362</width>
+     <height>61</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Wczytaj plik po zakończeniu</string>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QCheckBox" name="load_chk">
+      <property name="text">
+       <string>Wczytaj plik po zakończeniu</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="codice_chk">
+      <property name="text">
+       <string>Uwzględniaj tylko codice drzew (P103108, P103118)</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <customwidgets>
