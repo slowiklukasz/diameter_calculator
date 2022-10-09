@@ -33,10 +33,11 @@ import os.path
 
 # LS
 from qgis.core import QgsVectorLayer, QgsField
+from qgis.utils import iface
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QVariant
 import time
-from .obw_d import DiamCalculator
+from .obw_d import CirDiamCalc
 from .diam_calc_info import DlgInfo
 
 
@@ -198,7 +199,7 @@ class DiamCalc:
             self.dlg = DiamCalcDialog()
             
             # ADDED BY LS
-            self.dlg.obw_in_dlg.fileChanged.connect(self.obw_in_changed)
+            self.dlg.cir_fn_dlg.fileChanged.connect(self.cir_fn_changed)
             self.dlg.btn_box.accepted.connect(self.btn_box_accepted)
             self.dlg.btn_box.rejected.connect(self.btn_box_rejected)
 
@@ -216,32 +217,32 @@ class DiamCalc:
             
             
     # ADDED BY LS
-    def obw_in_changed(self):
-        if self.dlg.obw_in_dlg.filePath() == "":
-            self.dlg.obw_diam_cmb.clear()
+    def cir_fn_changed(self):
+        if self.dlg.cir_fn_dlg.filePath() == "":
+            self.dlg.cir_col_cmb.clear()
         else: 
-            self.path = self.dlg.obw_in_dlg.filePath()
+            self.path = self.dlg.cir_fn_dlg.filePath()
             self.lyr = QgsVectorLayer(self.path, "", "ogr")
             
             if self.lyr.isValid():
                 col_lst = self.lyr.attributeAliases()
                 
-                self.dlg.obw_diam_cmb.clear()
-                self.dlg.obw_diam_cmb.addItems(col_lst)
+                self.dlg.cir_col_cmb.clear()
+                self.dlg.cir_col_cmb.addItems(col_lst)
                 
-                index = self.dlg.obw_diam_cmb.findText("diam_tronc", QtCore.Qt.MatchFixedString)
+                index = self.dlg.cir_col_cmb.findText("diam_tronc", QtCore.Qt.MatchFixedString)
                 if index >= 0:
-                    self.dlg.obw_diam_cmb.setCurrentIndex(index)
+                    self.dlg.cir_col_cmb.setCurrentIndex(index)
 
 
     def btn_box_accepted(self):
-        if self.dlg.obw_in_dlg.filePath() == "":
+        if self.dlg.cir_fn_dlg.filePath() == "":
             QMessageBox.warning(self.dlg, 'Błąd!', 'Nie wybrano pliku')
         elif not self.lyr.isValid():
             QMessageBox.warning(self.dlg, 'Błąd!', 'Błędny plik')
-        elif self.dlg.obw_diam_cmb.currentText() =="":
+        elif self.dlg.cir_col_cmb.currentText() =="":
             QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano kolumny z obwodami')
-        elif self.dlg.obw_newcol_led.text()=="":
+        elif self.dlg.cir_newcol_led.text()=="":
             QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano nazwy kolumny z średnicami')
         else:
             self.dlg_info = DlgInfo()
@@ -260,12 +261,20 @@ class DiamCalc:
     
         
     def evt_timer_timeout(self):
-        obw_col_nm = self.dlg.obw_diam_cmb.currentText()
-        d_col_nm = self.dlg.obw_newcol_led.text()
-        sep_type = self.dlg.obw_sep_cmb.currentText()[-3:-2]
+        cir_col_nm = self.dlg.cir_col_cmb.currentText()
+        diam_col_nm = self.dlg.cir_newcol_led.text()
+        sep_type = self.dlg.cir_sep_cmb.currentText()[-3:-2]
+        rounding = self.dlg.cir_rnd_sbx.value()
         
         try:
-            msg = DiamCalculator.obw_d_calc(self.lyr, obw_col_nm, d_col_nm, sep_type)
+            msg = CirDiamCalc.cir_to_diam(  self.lyr, cir_col_nm, \
+                                            diam_col_nm, sep_type, rounding)
+            
+            if self.dlg.load_btn.isChecked():
+                iface.addVectorLayer(self.lyr.dataProvider().dataSourceUri(), \
+                                    self.lyr.sourceName(), \
+                                    "ogr")
+                
         except Exception as e:
             msg = f"Błąd! \n\n\
             - {repr(e)} \n\
