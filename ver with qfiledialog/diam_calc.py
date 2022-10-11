@@ -34,7 +34,7 @@ import os.path
 # LS
 from qgis.core import QgsVectorLayer, QgsField
 from qgis.utils import iface
-from PyQt5.QtWidgets import QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QVariant
 import time
 from .utilis import CirDiamCalc
@@ -189,23 +189,6 @@ class DiamCalc:
             self.iface.removeToolBarIcon(action)
 
 
-    # ADDED BY LS
-    def dialog_reset(self):
-        self.dlg.cir_fn_led.setText("")
-        self.dlg.cir_col_cmb.clear()
-        self.dlg.cir_sep_cmb.setCurrentIndex(0)
-        self.dlg.cir_rnd_sbx.setValue(0)
-        self.dlg.cir_newcol_led.setText("sred")
-        self.dlg.load_chk.setChecked(True)
-        
-        self.dlg.diam_fn_led.setText("")
-        self.dlg.diam_col_cmb.clear()
-        self.dlg.diam_sep_cmb.setCurrentIndex(0)
-        self.dlg.diam_rnd_sbx.setValue(0)
-        self.dlg.diam_newcol_led.setText("obw")
-        self.dlg.codice_chk.setChecked(True)
-        
-
     def run(self):
         """Run method that performs all the real work"""
 
@@ -217,9 +200,9 @@ class DiamCalc:
             
             # ADDED BY LS
             self.dlg.main_tab.currentChanged.connect(self.main_tab_changed)
-        
-            self.dlg.cir_fn_btn.clicked.connect(self.cir_fn_clicked)
-            self.dlg.diam_fn_btn.clicked.connect(self.diam_fn_clicked)
+            
+            self.dlg.cir_fn_dlg.fileChanged.connect(self.cir_fn_changed)
+            self.dlg.diam_fn_dlg.fileChanged.connect(self.diam_fn_changed)
             
             self.dlg.btn_box.accepted.connect(self.btn_box_accepted)
             self.dlg.btn_box.rejected.connect(self.btn_box_rejected)
@@ -229,23 +212,31 @@ class DiamCalc:
         # show the dialog
         self.dlg.show()
 
-
+            
     # ADDED BY LS
     def main_tab_changed(self):
-        self.dialog_reset()
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
     
-    
-    def cir_fn_clicked(self):
-        fn, fn_ok = QFileDialog.getOpenFileName(self.dlg,
-                            "Plik (*.shp) do przeliczenia średnic",
-                            os.path.abspath(r""),"Shape File (*.shp);")
-
-        if fn_ok:
-            self.dlg.cir_fn_led.setText(f"{fn}")
-            self.lyr = QgsVectorLayer(fn, "", "ogr")
+    def cir_fn_changed(self):
+        if self.dlg.cir_fn_dlg.filePath() == "":
+            self.dlg.cir_col_cmb.clear()
+        else: 
+            self.path = self.dlg.cir_fn_dlg.filePath()
+            self.lyr = QgsVectorLayer(self.path, "", "ogr")
             
             if self.lyr.isValid():
                 col_lst = self.lyr.attributeAliases()
+                
                 self.dlg.cir_col_cmb.clear()
                 self.dlg.cir_col_cmb.addItems(col_lst)
                 
@@ -254,79 +245,69 @@ class DiamCalc:
                     self.dlg.cir_col_cmb.setCurrentIndex(index)
 
 
-    def diam_fn_clicked(self):
-        fn, fn_ok = QFileDialog.getOpenFileName(self.dlg,
-                            "Plik (*.shp) do przeliczenia obwodów",
-                            os.path.abspath(r""),"Shape File (*.shp);")
-
-        if fn_ok:
-            self.dlg.diam_fn_led.setText(f"{fn}")
-            self.lyr = QgsVectorLayer(fn, "", "ogr")
+    def diam_fn_changed(self):
+        if self.dlg.diam_fn_dlg.filePath() == "":
+            self.dlg.diam_col_cmb.clear()
+        else: 
+            self.path = self.dlg.diam_fn_dlg.filePath()
+            self.lyr = QgsVectorLayer(self.path, "", "ogr")
             
             if self.lyr.isValid():
                 col_lst = self.lyr.attributeAliases()
+                
                 self.dlg.diam_col_cmb.clear()
                 self.dlg.diam_col_cmb.addItems(col_lst)
 
 
     def btn_box_accepted(self):
         if self.dlg.main_tab.currentIndex()==0:
-            path = self.dlg.cir_fn_led.text()
-            if not os.path.isfile(path):
-                QMessageBox.warning(self.dlg, 'Błąd!', 'Wybierz właściwy plik')
+            if self.dlg.cir_fn_dlg.filePath() == "":
+                QMessageBox.warning(self.dlg, 'Błąd!', 'Nie wybrano pliku')
+            elif not self.lyr.isValid():
+                QMessageBox.warning(self.dlg, 'Błąd!', 'Błędny plik')
+            elif self.dlg.cir_col_cmb.currentText() =="":
+                QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano kolumny z obwodami')
+            elif self.dlg.cir_newcol_led.text()=="":
+                QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano nazwy kolumny z średnicami')
             else:
-                self.lyr = QgsVectorLayer(path, "", "ogr")
+                self.dlg_info = DlgInfo()
+                self.dlg_info.setModal(True)
                 
-                if not self.lyr.isValid():
-                    QMessageBox.warning(self.dlg, 'Błąd!', 'Błędny plik')
-                elif self.dlg.cir_col_cmb.currentText() =="":
-                    QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano kolumny z obwodami')
-                elif self.dlg.cir_newcol_led.text()=="":
-                    QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano nazwy kolumny z średnicami')
-                else:
-                    self.dlg_info = DlgInfo()
-                    self.dlg_info.setModal(True)
-                    
-                    self.dlg_info.info_ted.append('Obliczenia w trakcie, proszę czekać ...')
-                    
-                    self.dlg_info.timer = QtCore.QTimer()
-                    self.dlg_info.timer.setSingleShot(True)
-                    self.dlg_info.timer.setInterval(100)
-                    self.dlg_info.timer.timeout.connect(self.cir_to_diam_timeout)
-                    
-                    self.dlg_info.show()
-                    self.dlg_info.timer.start()
-                    self.dlg_info.exec_()
-                    
+                self.dlg_info.info_ted.append('Obliczenia w trakcie, proszę czekać ...')
+                
+                self.dlg_info.timer = QtCore.QTimer()
+                self.dlg_info.timer.setSingleShot(True)
+                self.dlg_info.timer.setInterval(100)
+                self.dlg_info.timer.timeout.connect(self.cir_to_diam_timeout)
+                
+                self.dlg_info.show()
+                self.dlg_info.timer.start()
+                self.dlg_info.exec_()
         else:
-            path = self.dlg.diam_fn_led.text()
-            if not os.path.isfile(path):
-                QMessageBox.warning(self.dlg, 'Błąd!', 'Wybierz właściwy plik')
+            if self.dlg.diam_fn_dlg.filePath() == "":
+                QMessageBox.warning(self.dlg, 'Błąd!', 'Nie wybrano pliku')
+            elif not self.lyr.isValid():
+                QMessageBox.warning(self.dlg, 'Błąd!', 'Błędny plik')
+            elif self.dlg.diam_col_cmb.currentText() =="":
+                QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano kolumny z średnicami')
+            elif self.dlg.diam_newcol_led.text()=="":
+                QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano nazwy kolumny z obwodami')
             else:
-                self.lyr = QgsVectorLayer(path, "", "ogr")
+                self.dlg_info = DlgInfo()
+                self.dlg_info.setModal(True)
                 
-                if not self.lyr.isValid():
-                    QMessageBox.warning(self.dlg, 'Błąd!', 'Błędny plik')
-                elif self.dlg.diam_col_cmb.currentText() =="":
-                    QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano kolumny z średnicami')
-                elif self.dlg.diam_newcol_led.text()=="":
-                    QMessageBox.warning(self.dlg,'Błąd!', 'Nie wybrano nazwy kolumny z obwodami')
-                else:
-                    self.dlg_info = DlgInfo()
-                    self.dlg_info.setModal(True)
-                    
-                    self.dlg_info.info_ted.append('Obliczenia w trakcie, proszę czekać ...')
-                    
-                    self.dlg_info.timer = QtCore.QTimer()
-                    self.dlg_info.timer.setSingleShot(True)
-                    self.dlg_info.timer.setInterval(100)
-                    self.dlg_info.timer.timeout.connect(self.diam_to_cir_timeout)
-                    
-                    self.dlg_info.show()
-                    self.dlg_info.timer.start()
-                    self.dlg_info.exec_()
- 
-
+                self.dlg_info.info_ted.append('Obliczenia w trakcie, proszę czekać ...')
+                
+                self.dlg_info.timer = QtCore.QTimer()
+                self.dlg_info.timer.setSingleShot(True)
+                self.dlg_info.timer.setInterval(100)
+                self.dlg_info.timer.timeout.connect(self.diam_to_cir_timeout)
+                
+                self.dlg_info.show()
+                self.dlg_info.timer.start()
+                self.dlg_info.exec_()
+            
+    
     def cir_to_diam_timeout(self):
         cir_col_nm = self.dlg.cir_col_cmb.currentText()
         diam_col_nm = self.dlg.cir_newcol_led.text()
@@ -345,16 +326,25 @@ class DiamCalc:
                                     "ogr")
         except Exception as e:
             msg = f"Błąd! \n\n\
-            - Dane z kolumny '{cir_col_nm}' NIE zostały przeliczone na średnice:\n\
-            \t- {repr(e)} \n\n\
-            - Sprawdź poprawność przeliczanych danych \n\
-            - Sprawdź czy wybrano właściwą kolumnę \n\
-            - Sprawdź czy wybrano właściwy znacznik oddzielający"
+            - {repr(e)} \n\
+            \t- Sprawdź poprawność przeliczanych danych \n\
+            \t- Sprawdź czy wybrano właściwą kolumnę \n\
+            \t- Sprawdź czy wybrano właściwy znacznik oddzielający"
 
         self.dlg_info.info_ted.clear()
         self.dlg_info.info_ted.setText(f'{msg}')
         
-        self.dialog_reset()
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
 
 
     def diam_to_cir_timeout(self):
@@ -375,24 +365,56 @@ class DiamCalc:
                                     "ogr")
         except Exception as e:
             msg = f"Błąd! \n\n\
-            - Dane z kolumny '{diam_col_nm}' NIE zostały przeliczone na obwody:\n\
-            \t- {repr(e)} \n\n\
-            - Sprawdź poprawność przeliczanych danych \n\
-            - Sprawdź czy wybrano właściwą kolumnę \n\
-            - Sprawdź czy wybrano właściwy znacznik oddzielający"
+            - {repr(e)} \n\
+            \t- Sprawdź poprawność przeliczanych danych \n\
+            \t- Sprawdź czy wybrano właściwą kolumnę \n\
+            \t- Sprawdź czy wybrano właściwy znacznik oddzielający"
 
         self.dlg_info.info_ted.clear()
         self.dlg_info.info_ted.setText(f'{msg}')
         
-        self.dialog_reset()
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
 
 
     def btn_box_rejected(self):
         self.dlg.main_tab.setCurrentIndex(0)
-        self.dialog_reset()
+        
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
+        
         self.dlg.close()
-      
-      
+        
+        
     def close_event(self, event):
         self.dlg.main_tab.setCurrentIndex(0)
-        self.dialog_reset()
+        
+        self.dlg.cir_fn_dlg.setFilePath("")
+        self.dlg.cir_sep_cmb.setCurrentIndex(0)
+        self.dlg.cir_rnd_sbx.setValue(0)
+        self.dlg.cir_newcol_led.setText("sred")
+        self.dlg.load_chk.setChecked(True)
+        
+        self.dlg.diam_fn_dlg.setFilePath("")
+        self.dlg.diam_sep_cmb.setCurrentIndex(0)
+        self.dlg.diam_rnd_sbx.setValue(0)
+        self.dlg.diam_newcol_led.setText("obw")
+        self.dlg.codice_chk.setChecked(True)
